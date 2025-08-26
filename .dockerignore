@@ -3,6 +3,7 @@
 .gitignore
 .env.local
 .env.example
+media/*
 db.sqlite3
 PRM3_Project - Online Store.md
 README.md
