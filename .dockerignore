@@ -1,0 +1,8 @@
+.idea
+.venv
+.gitignore
+.env.local
+.env.example
+db.sqlite3
+PRM3_Project - Online Store.md
+README.md
