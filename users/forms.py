@@ -5,9 +5,26 @@ from users.models import User
 
 class UserRegistrationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
+        # TODO: потерялись стили для полей с паролями
         model = User
         fields = ('email', 'username', 'first_name', 'last_name', 'password1', 'password2')
+        widgets = {
+            'email': forms.EmailInput(attrs={'placeholder': 'example@gmail.com', 'class': 'Input'}),
+            'username': forms.TextInput(attrs={'placeholder': 'Your username', 'class': 'Input'}),
+            'first_name': forms.TextInput(attrs={'placeholder': 'John', 'class': 'Input'}),
+            'last_name': forms.TextInput(attrs={'placeholder': 'Smith', 'class': 'Input'}),
+            'password1': forms.PasswordInput(attrs={'placeholder': 'qwerty123', 'class': 'Input'}),
+            'password2': forms.PasswordInput(attrs={'placeholder': 'qwerty123', 'class': 'Input'})
+        }
 
+        labels = {
+            'email': 'Email',
+            'username': 'Username',
+            'first_name': 'First Name',
+            'last_name': 'Last Name',
+            'password1': 'Password',
+            'password2': 'Confirm Password'
+        }
 
     def clean(self):
         cleaned_data = super().clean()
@@ -23,3 +40,7 @@ class UserRegistrationForm(UserCreationForm):
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError("This email is already in use.")
         return email
+
+class UserLoginForm(forms.Form):
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder': 'example@gmail.com', 'class': 'Input'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'qwerty123', 'class': 'Input'}))
