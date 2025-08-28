@@ -1,5 +1,6 @@
 from django.db import models
-
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth import get_user_model
 
 class JournalizedModel(models.Model):
     create_at = models.DateTimeField(auto_now_add=True)
@@ -45,3 +46,10 @@ class Product(JournalizedModel):
 
     def get_absolute_url(self):
         return f'/products/{self.slug}/'
+
+
+class Review(JournalizedModel):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    rating = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    comment = models.TextField(max_length=1000)
