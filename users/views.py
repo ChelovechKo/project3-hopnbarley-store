@@ -13,3 +13,7 @@ class UserCreateView(CreateView):
 class HomeView(TemplateView):
     '''Домашняя страница'''
     template_name = 'users/home.html'
+
+
+class AccountView(TemplateView):
+    template_name = 'users/account.html'
