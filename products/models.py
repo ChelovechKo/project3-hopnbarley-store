@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 from django.utils.text import slugify
 
 
@@ -47,10 +48,11 @@ class Product(JournalizedModel):
         return self.name
 
     def get_absolute_url(self):
-        return f'/products/{self.slug}/'
+        return reverse('products:product-detail', kwargs={'slug': self.slug})
     
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
+        if not self.slug:
+            self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
 
