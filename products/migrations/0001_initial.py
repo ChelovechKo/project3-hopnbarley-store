@@ -62,7 +62,7 @@ class Migration(migrations.Migration):
                 ("price", models.DecimalField(decimal_places=2, max_digits=8)),
                 (
                     "image",
-                    models.ImageField(blank=True, null=True, upload_to="product_image"),
+                    models.ImageField(blank=True, null=True, upload_to="product_images"),
                 ),
                 ("stock", models.PositiveIntegerField()),
                 ("is_active", models.BooleanField(default=True)),
