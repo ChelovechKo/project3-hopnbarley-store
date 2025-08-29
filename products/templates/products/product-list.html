@@ -53,13 +53,14 @@
             </div>
 
             <div class="product-grid">
-                {% for product in products %}
+                {% for product in page_obj %}
                     <a href="{% url 'products:product-detail' product.slug %}" class="product-card-link">
                         <div class="product-card">
                             <img src="{{  product.image.url }}" alt="{{ product.name }}" class="product-card__image">
                             <div class="product-card__info">
                                 <h4 class="product-card__name">{{ product.name }}</h4>
                                 <p class="product-card__price">${{ product.price }}</p>
+                                <p class="product-card__price">⭐{{ product.avg_rating|default:'—' }}</p>
                                 <p class="product-card__description">{{ product.description|truncatechars:70 }}</p>
                             </div>
                         </div>
@@ -69,22 +70,55 @@
                 {% endfor %}
             </div>
 
+<!--            TODO: beautiful pagination-->
+<!--            <div class="pagination">-->
+<!--                <a href="#" class="pagination__link pagination__link&#45;&#45;prev">-->
+<!--                    <i class="fa-solid fa-arrow-left"></i>-->
+<!--                    <span>Previous</span>-->
+<!--                </a>-->
+<!--                <div class="pagination-list">-->
+<!--                    <a href="#" class="pagination__link active">1</a>-->
+<!--                    <a href="#" class="pagination__link">2</a>-->
+<!--                    <a href="#" class="pagination__link">3</a>-->
+<!--                    <span class="pagination__dots">...</span>-->
+<!--                    <a href="#" class="pagination__link">20</a>-->
+<!--                </div>-->
+<!--                <a href="#" class="pagination__link pagination__link&#45;&#45;next">-->
+<!--                    <span>Next</span>-->
+<!--                    <i class="fa-solid fa-arrow-right"></i>-->
+<!--                </a>-->
+<!--            </div>-->
+<!--  page_obj.previous_page_number  -->
+
             <div class="pagination">
-                <a href="#" class="pagination__link pagination__link--prev">
-                    <i class="fa-solid fa-arrow-left"></i>
-                    <span>Previous</span>
-                </a>
-                <div class="pagination-list">
-                    <a href="#" class="pagination__link active">1</a>
-                    <a href="#" class="pagination__link">2</a>
-                    <a href="#" class="pagination__link">3</a>
-                    <span class="pagination__dots">...</span>
-                    <a href="#" class="pagination__link">20</a>
-                </div>
-                <a href="#" class="pagination__link pagination__link--next">
-                    <span>Next</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </a>
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}" class="pagination__link pagination__link--prev" >
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Previous</span>
+                    </a>
+                {% else %}
+                    <a href="#" class="pagination__link pagination__link--prev" onclick="return false;">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Previous</span>
+                    </a>
+                {% endif %}
+
+
+                <span class="current">
+                    Page {{ page_obj.number }}
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" class="pagination__link pagination__link--next">
+                        <span>Next</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                {% else %}
+                    <a href="#" class="pagination__link pagination__link--next" onclick="return false;">
+                        <span>Next</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                {% endif %}
             </div>
         </section>
     </div>

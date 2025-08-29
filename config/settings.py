@@ -87,3 +87,10 @@ STATICFILES_DIRS = [
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+PRODUCTS_QUERY_MAP = {
+    'new': '-create_at',
+    'rating': '-reviews__rating',
+    'price_asc': 'price',
+    'price_desc': '-price',
+}
