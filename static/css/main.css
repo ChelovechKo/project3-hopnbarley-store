@@ -154,6 +154,38 @@ header {
     border-color: var(--dark-green);
 }
 
+/* Count item in Cart style */
+.cart-icon {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+}
+
+.cart-icon__img {
+  display: block;
+  width: 28px;
+  height: 28px;
+}
+
+.cart-icon__badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(50%, -50%);
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #16a34a;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+  box-shadow: 0 0 0 2px #fff;
+  pointer-events: none;
+}
+
 /* Hero Banner */
 .hero-banner {
     position: relative;

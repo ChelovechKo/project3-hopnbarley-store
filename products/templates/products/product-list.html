@@ -74,26 +74,6 @@
                 {% endfor %}
             </div>
 
-<!--            TODO: beautiful pagination-->
-<!--            <div class="pagination">-->
-<!--                <a href="#" class="pagination__link pagination__link&#45;&#45;prev">-->
-<!--                    <i class="fa-solid fa-arrow-left"></i>-->
-<!--                    <span>Previous</span>-->
-<!--                </a>-->
-<!--                <div class="pagination-list">-->
-<!--                    <a href="#" class="pagination__link active">1</a>-->
-<!--                    <a href="#" class="pagination__link">2</a>-->
-<!--                    <a href="#" class="pagination__link">3</a>-->
-<!--                    <span class="pagination__dots">...</span>-->
-<!--                    <a href="#" class="pagination__link">20</a>-->
-<!--                </div>-->
-<!--                <a href="#" class="pagination__link pagination__link&#45;&#45;next">-->
-<!--                    <span>Next</span>-->
-<!--                    <i class="fa-solid fa-arrow-right"></i>-->
-<!--                </a>-->
-<!--            </div>-->
-<!--  page_obj.previous_page_number  -->
-
             <div class="pagination">
                 {% if page_obj.has_previous %}
                     <a href="?{% update_query_string request page_obj.previous_page_number %}"
