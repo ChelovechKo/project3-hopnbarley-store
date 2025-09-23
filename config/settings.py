@@ -16,9 +16,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users.apps.UsersConfig',
     'products',
     'orders',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -40,10 +40,10 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'orders.context_processors.cart',
             ],
         },
     },
@@ -93,3 +93,4 @@ PRODUCTS_QUERY_MAP = {
     'price_asc': 'price',
     'price_desc': '-price',
 }
+CART_SESSION_ID = 'cart'

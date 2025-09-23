@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const decreaseBtn = quantityCounter.querySelector('[data-action="decrease"]');
             const increaseBtn = quantityCounter.querySelector('[data-action="increase"]');
             const quantityValueSpan = quantityCounter.querySelector('.quantity-value');
-            let quantity = 0;
+            let quantity = Number(quantityValueSpan.dataset.qty) || 0;;
             function updateView() {
                 if (quantity === 0) {
                     addToCartBtn.classList.remove('is-hidden');
@@ -223,9 +223,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else if (event.target.closest('[data-action="decrease"]')) {
                     quantity = quantity > 1 ? quantity - 1 : 0;
                 }
-                if (event.target.closest('[data-action="remove"]') || quantity === 0) {
-                    cartItem.remove();
-                } else {
+                if (quantity != 0) {
                     quantityElem.textContent = quantity;
                     itemTotalElem.textContent = `$${(basePrice * quantity).toFixed(2)}`;
                 }

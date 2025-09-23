@@ -42,8 +42,13 @@
                 <a href="{% url 'users:account' %}" class="user-icon" aria-label="My Account">
                     <img src="{% static 'img/icons/User_alt.svg' %}" alt="User Account">
                 </a>
-                <a href="cart.html" class="cart-icon" aria-label="Shopping Cart">
+                <a href="{% url 'orders:cart_detail' %}" class="cart-icon" aria-label="Shopping Cart">
                     <img src="{% static 'img/icons/Shopping_bag.svg' %}" alt="Shopping Cart">
+                    {% if cart|length > 0 %}
+                        <span class="cart-icon__badge" aria-live="polite">
+                          {% if cart|length > 99 %}99+{% else %}{{ cart|length }}{% endif %}
+                        </span>
+                    {% endif %}
                 </a>
             </div>
         {% else %}

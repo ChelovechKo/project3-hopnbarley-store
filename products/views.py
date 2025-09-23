@@ -2,6 +2,7 @@ from django.views.generic import DetailView, ListView, TemplateView
 from products.models import Product, Review, Category
 from django.db.models import Avg, Q
 from config.settings import PRODUCTS_QUERY_MAP
+from orders.cart import Cart
 
 
 class ProductDetailView(DetailView):
@@ -16,6 +17,13 @@ class ProductDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['reviews'] = Review.objects.filter(product=self.object)
+
+        cart = Cart(self.request)
+        raw = cart.cart.get(str(self.object.id), {})
+        context['item'] = {
+            'quantity': raw.get('quantity', 0),
+            'price': raw.get('price'),
+        }
         return context
 
 
