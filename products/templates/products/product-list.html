@@ -64,7 +64,7 @@
                             <div class="product-card__info">
                                 <h4 class="product-card__name">{{ product.name }}</h4>
                                 <p class="product-card__price">${{ product.price }}</p>
-                                <p class="product-card__price">⭐{{ product.avg_rating|default:'—' }}</p>
+                                <p class="product-card__price">⭐{{ product.avg_rating|floatformat:2|default:"—" }}</p>
                                 <p class="product-card__description">{{ product.description|truncatechars:70 }}</p>
                             </div>
                         </div>

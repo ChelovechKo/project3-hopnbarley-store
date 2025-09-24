@@ -31,7 +31,7 @@ class ProductListView(ListView):
     """Домашняя страница с каталогом товаров"""
     context_object_name = 'products'
     template_name = 'products/product-list.html'
-    paginate_by = 1
+    paginate_by = 9
     allow_empty = True
 
     def get_queryset(self):
