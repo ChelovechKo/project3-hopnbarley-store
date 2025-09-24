@@ -1,26 +1,6 @@
 [
 {
   "model": "users.user",
-  "pk": 1,
-  "fields": {
-    "password": "pbkdf2_sha256$1000000$snPjujTfeXzr0aIprWfLKG$w5JCDSkUOcyauLNB6KPlRJUQKZvGW/AgFJAasgjhJ7I=",
-    "last_login": null,
-    "is_superuser": true,
-    "username": "admin",
-    "first_name": "",
-    "last_name": "",
-    "is_staff": true,
-    "is_active": true,
-    "date_joined": "2025-08-27T13:05:33.488Z",
-    "email": "ad@min.com",
-    "phone": null,
-    "image": "profile_images/default.png",
-    "groups": [],
-    "user_permissions": []
-  }
-},
-{
-  "model": "users.user",
   "pk": 2,
   "fields": {
     "password": "pbkdf2_sha256$1000000$Nvmpt3sMsw34cC6U06j3Mp$1pMXYVjHDW0wr8HULacpT/oBr/Flt1zQQX+sc6izpyE=",
