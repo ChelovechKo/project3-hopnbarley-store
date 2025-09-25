@@ -38,7 +38,7 @@
 
         {% if user.is_authenticated %}
             <!-- Block for authorized user -->
-            <div class="header__user-actions" id="auth-user">
+            <div class="header__user-actions" style="display: flex;" id="auth-user">
                 <a href="{% url 'users:account' %}" class="user-icon" aria-label="My Account">
                     <img src="{% static 'img/icons/User_alt.svg' %}" alt="User Account">
                 </a>
@@ -53,7 +53,7 @@
             </div>
         {% else %}
             <!-- Block for unauthorized user -->
-            <div id="auth-guest">
+            <div class="header__auth-buttons" style="display: flex;" id="auth-guest">
                 <a href="{% url 'users:login' %}" class="button button--secondary">Sign in</a>
                 <a href="{% url 'users:register' %}" class="button button--primary">Register</a>
             </div>
