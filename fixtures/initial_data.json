@@ -735,5 +735,29 @@
     "head_comment": "Solid and Dependable",
     "comment": "A good, reliable hop. Not as \"explosive\" as Citra or Mosaic, but for a balanced beer, it's just what you need. Sometimes the alpha acids are on the lower end, so check the batch specs. Otherwise, excellent."
   }
+},
+{
+  "model": "orders.order",
+  "pk": 123232122033,
+  "fields": {
+    "create_at": "2025-03-07T05:00:15.527Z",
+    "update_at": "2025-03-07T08:24:09.126Z",
+    "status": "pending",
+    "user": 2,
+    "total_price": 100.00,
+    "shipping_address": "Spain, Madrid"
+  }
+},
+{
+  "model": "orders.order",
+  "pk": 123232122033,
+  "fields": {
+    "create_at": "2025-03-09T05:00:15.527Z",
+    "update_at": "2025-03-09T08:24:09.126Z",
+    "status": "shipped",
+    "user": 2,
+    "total_price": 90.00,
+    "shipping_address": "France, Paris"
+  }
 }
 ]

@@ -94,3 +94,6 @@ PRODUCTS_QUERY_MAP = {
     'price_desc': '-price',
 }
 CART_SESSION_ID = 'cart'
+FIXTURE_DIRS = [
+    os.path.join(BASE_DIR, "fixtures"),
+]
