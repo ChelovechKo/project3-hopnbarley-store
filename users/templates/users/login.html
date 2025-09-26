@@ -16,6 +16,12 @@
       <form class="auth-form" id="login-form" method="post">
         {% csrf_token %}
 
+        {% if form.non_field_errors %}
+          {% for error in form.non_field_errors %}
+            <div class="error-message">{{ error }}</div>
+          {% endfor %}
+        {% endif %}
+
         {% for field in form %}
           <div class="InputField">
             <label for="{{ field.id_for_label }}">{{ field.label }}</label>
