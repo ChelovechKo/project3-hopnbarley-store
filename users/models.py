@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .validators import validate_phone
 
+
 class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -17,7 +18,6 @@ class User(AbstractUser):
 
     city = models.CharField(max_length=100, null=True, blank=True)
     address = models.CharField(max_length=255, null=True, blank=True)
-
 
     class Meta:
         verbose_name = 'User'

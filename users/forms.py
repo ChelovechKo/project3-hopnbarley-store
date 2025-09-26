@@ -41,6 +41,38 @@ class UserRegistrationForm(UserCreationForm):
             raise forms.ValidationError("This email is already in use.")
         return email
 
+
 class UserLoginForm(forms.Form):
     email = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder': 'example@gmail.com', 'class': 'Input'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'qwerty123', 'class': 'Input'}))
+
+
+class UserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('email', 'username', 'first_name', 'last_name', 'phone', 'city', 'address')
+        widgets = {
+            'email': forms.EmailInput(
+                attrs={'placeholder': 'example@mail.com', 'class': 'Input'}),
+            'username': forms.TextInput(
+                attrs={'placeholder': 'Your username', 'class': 'Input'}),
+            'first_name': forms.TextInput(
+                attrs={'placeholder': 'John', 'class': 'Input'}),
+            'last_name': forms.TextInput(
+                attrs={'placeholder': 'Doe', 'class': 'Input'}),
+            'phone': forms.TextInput(
+                attrs={'placeholder': '+(123)1234567', 'class': 'Input'}),
+            'city': forms.TextInput(
+                attrs={'placeholder': 'City', 'class': 'Input'}),
+            'address': forms.Textarea(
+                attrs={'placeholder': 'Address', 'class': 'Textarea', 'rows': 3})
+        }
+        labels = {
+            'email': 'Email',
+            'username': 'Username',
+            'first_name': 'First Name',
+            'last_name': 'Last Name',
+            'phone': 'Phone',
+            'address': 'Address',
+            'city': 'City',
+        }

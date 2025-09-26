@@ -136,30 +136,15 @@
       <div id="account-info" class="tab-pane">
         <div class="account-form-container">
           <h2 class="account-form-title">Personal Info</h2>
-          <form id="account-info-form">
-            <div class="checkout-form-group">
-
-            </div>
-            <div class="checkout-form-group">
-              <label for="acc-full-name">Full Name</label>
-              <input type="text" id="acc-full-name" name="full_name" class="Input" value="{{ user.first_name }} {{ user.last_name }}" placeholder="John Doe" required>
-            </div>
-            <div class="checkout-form-group">
-              <label for="acc-phone">Phone number</label>
-              <input type="tel" id="acc-phone" name="phone" class="Input" value="{{ user.phone }}" placeholder="+(123)1234567" required>
-            </div>
-            <div class="checkout-form-group">
-              <label for="acc-email">Email</label>
-              <input type="email" id="acc-email" name="email" class="Input" value="{{ user.email }}" placeholder="example@mail.com" required>
-            </div>
-            <div class="checkout-form-group">
-              <label for="acc-city">City</label>
-              <input type="text" id="acc-city" name="city" class="Input" value="{{ user.city }}" placeholder="City" required>
-            </div>
-            <div class="checkout-form-group">
-              <label for="acc-address">Shipping address</label>
-              <textarea id="acc-address" name="address" class="Textarea" value="{{ user.address }}" placeholder="Address" rows="3" required></textarea>
-            </div>
+          <form id="account-info-form" action="{% url 'users:update' user.id %}" method="post">
+            {% csrf_token %}
+            {% for field in form %}
+              <div class="checkout-form-group">
+                {{ field.errors }}
+                {{ field.label }}
+                {{ field }}
+              </div>
+            {% endfor %}
             <button type="submit" class="button button--primary button--full-width">Save</button>
           </form>
           <form action="{% url 'users:logout' %}" method="post">
