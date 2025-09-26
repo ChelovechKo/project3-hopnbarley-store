@@ -15,121 +15,41 @@
     <div class="tab-content">
       <!-- Order History Panel -->
       <div id="order-history" class="tab-pane active">
-        <div class="order-history-table">
-          <!-- Table Header -->
-          <div class="order-table-header">
-            <div class="order-table-cell">Order Details</div>
-            <div class="order-table-cell">Order Status</div>
-            <div class="order-table-cell">Total</div>
-          </div>
-          <!-- Table Body -->
-          <div class="order-table-body">
-            <!-- Example Row 1 -->
-            <div class="order-table-row">
-              <div class="order-table-cell">
-                <span class="order-id">#123232122033</span>
-                <span class="order-date">7 Mar 2025</span>
-              </div>
-              <div class="order-table-cell">
-                <span class="order-status">Pending</span>
-              </div>
-              <div class="order-table-cell">
-                <span class="order-total">$100.00</span>
-              </div>
+        {% if orders %}
+          <div class="order-history-table">
+            <!-- Table Header -->
+            <div class="order-table-header">
+              <div class="order-table-cell">Order Details</div>
+              <div class="order-table-cell">Order Status</div>
+              <div class="order-table-cell">Total</div>
             </div>
-            <!-- Example Row 2 -->
-            <div class="order-table-row">
-              <div class="order-table-cell">
-                <span class="order-id">#123232122033</span>
-                <span class="order-date">7 Mar 2025</span>
-              </div>
-              <div class="order-table-cell">
-                <span class="order-status">Pending</span>
-              </div>
-              <div class="order-table-cell">
-                <span class="order-total">$90.00</span>
-              </div>
+            <!-- Table Body -->
+            <div class="order-table-body">
+              {% for order in orders %}
+                <div class="order-table-row">
+                  <div class="order-table-cell">
+                    <span class="order-id">#{{ order.id }}</span>
+                    <span class="order-date">{{ order.create_at|date }}</span>
+                  </div>
+                  <div class="order-table-cell">
+                    <span class="order-status">{{ order.status }}</span>
+                  </div>
+                  <div class="order-table-cell">
+                    <span class="order-total">${{ order.total_price }}</span>
+                  </div>
+                </div>
+              {% endfor %}
             </div>
-            <!-- ... add more rows as needed ... -->
-            <div class="order-table-row">
-              <div class="order-table-cell">
-                <span class="order-id">#123232122033</span>
-                <span class="order-date">7 Mar 2025</span>
-              </div>
-              <div class="order-table-cell">
-                <span class="order-status">Confirmed</span>
-              </div>
-              <div class="order-table-cell">
-                <span class="order-total">$140.00</span>
-              </div>
-            </div>
-            <div class="order-table-row">
-              <div class="order-table-cell">
-                <span class="order-id">#123232122033</span>
-                <span class="order-date">7 Mar 2025</span>
-              </div>
-              <div class="order-table-cell">
-                <span class="order-status">Delivered</span>
-              </div>
-              <div class="order-table-cell">
-                <span class="order-total">$120.00</span>
-              </div>
-            </div>
-            <div class="order-table-row">
-              <div class="order-table-cell">
-                <span class="order-id">#123232122033</span>
-                <span class="order-date">7 Mar 2025</span>
-              </div>
-              <div class="order-table-cell">
-                <span class="order-status">Shipped</span>
-              </div>
-              <div class="order-table-cell">
-                <span class="order-total">$120.00</span>
-              </div>
-            </div>
-            <div class="order-table-row">
-              <div class="order-table-cell">
-                <span class="order-id">#123232122033</span>
-                <span class="order-date">7 Mar 2025</span>
-              </div>
-              <div class="order-table-cell">
-                <span class="order-status">Shipped</span>
-              </div>
-              <div class="order-table-cell">
-                <span class="order-total">$120.00</span>
-              </div>
-            </div>
-            <div class="order-table-row">
-              <div class="order-table-cell">
-                <span class="order-id">#123232122033</span>
-                <span class="order-date">7 Mar 2025</span>
-              </div>
-              <div class="order-table-cell">
-                <span class="order-status">Shipped</span>
-              </div>
-              <div class="order-table-cell">
-                <span class="order-total">$120.00</span>
-              </div>
-            </div>
-            <div class="order-table-row">
-              <div class="order-table-cell">
-                <span class="order-id">#123232122033</span>
-                <span class="order-date">7 Mar 2025</span>
-              </div>
-              <div class="order-table-cell">
-                <span class="order-status">Shipped</span>
-              </div>
-              <div class="order-table-cell">
-                <span class="order-total">$120.00</span>
-              </div>
-            </div>
-          </div>
+
         </div>
         <!-- Pagination (simplified) -->
         <div class="account-pagination">
           <a href="#" class="pagination-link-account disabled">← Previous</a>
           <a href="#" class="pagination-link-account">Next →</a>
         </div>
+        {% else %}
+          <div style="display: flex; justify-content: center; padding: 1rem 0;">No orders yet</div>
+        {% endif %}
       </div>
 
       <!-- Account Information Panel -->

@@ -19,6 +19,13 @@
     --font-family: "Inter", sans-serif;
 }
 
+.error-message {
+  color: #e11d48;
+  font-size: 0.875rem;
+  margin-top: 4px;
+  display: block;
+}
+
 /* Base styles */
 body {
     font-family: var(--font-family);
