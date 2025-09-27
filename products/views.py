@@ -65,5 +65,30 @@ class ProductListView(ListView):
 
 
 class GuidesRecipesView(TemplateView):
-    """Гайды и рецепты"""
+    """Гайды и рецепты (Заглушка)"""
     template_name = 'guides-recipes.html'
+
+
+class Community(TemplateView):
+    """Сообщество (Заглушка)"""
+    template_name = 'community.html'
+
+
+class Resources(TemplateView):
+    """Ресурсы (Заглушка)"""
+    template_name = 'resources.html'
+
+
+class Contact(TemplateView):
+    """Контакты (Заглушка)"""
+    template_name = 'contact.html'
+
+
+class FAQ(TemplateView):
+    """FAQ (Заглушка)"""
+    template_name = 'faq.html'
+
+
+class License(TemplateView):
+    """Лиценция (Заглушка)"""
+    template_name = 'license.html'
