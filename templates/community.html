@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<main class="static-page-wrapper">
+  <div class="container">
+    <div class="static-page-content">
+      <h1 class="static-page-title">Community</h1>
+      <p class="static-page-subtitle">Coming Soon!</p>
+      <div class="static-page-text">
+        <p>We’re building a friendly place for homebrewers to connect, share tips, and showcase their latest brews.</p>
+        <p>Expect discussion threads, Q&A, meetups, and community spotlights.</p>
+        <p>Stay tuned for announcements!</p>
+      </div>
+      <a href="{% url 'products:product-list' %}" class="button button--primary">Back to Products</a>
+    </div>
+  </div>
+</main>
+{% endblock %}

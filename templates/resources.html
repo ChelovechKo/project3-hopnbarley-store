@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<main class="static-page-wrapper">
+  <div class="container">
+    <div class="static-page-content">
+      <h1 class="static-page-title">Resources</h1>
+      <p class="static-page-subtitle">Coming Soon!</p>
+      <div class="static-page-text">
+        <p>Curated articles, calculators, brewing references, water profiles, and style guidelines — all in one place.</p>
+        <p>We’re preparing practical tools and step-by-step checklists to make your brew days smoother.</p>
+      </div>
+      <a href="{% url 'products:product-list' %}" class="button button--primary">Back to Products</a>
+    </div>
+  </div>
+</main>
+{% endblock %}
