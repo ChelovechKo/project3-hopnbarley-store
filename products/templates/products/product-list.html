@@ -74,27 +74,30 @@
                 {% endfor %}
             </div>
 
-            <div class="pagination">
-                {% if page_obj.has_previous %}
-                    <a href="?{% update_query_string request page_obj.previous_page_number %}"
-                       class="pagination__link pagination__link--prev">
-                        <i class="fa-solid fa-arrow-left"></i>
-                        <span>Previous</span>
-                    </a>
-                {% endif %}
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+                <div class="pagination">
+                    {% if page_obj.has_previous %}
+                        <a href="?{% update_query_string request page_obj.previous_page_number %}"
+                           class="pagination__link pagination__link--prev">
+                            <i class="fa-solid fa-arrow-left"></i>
+                            <span>Previous</span>
+                        </a>
+                    {% endif %}
 
-                <span class="current">
-                    Page {{ page_obj.number }}
-                </span>
+                    <span class="pagination-link-account current">
+                      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
 
-                {% if page_obj.has_next %}
-                    <a href="?{% update_query_string request page_obj.next_page_number %}"
-                       class="pagination__link pagination__link--next">
-                        <span>Next</span>
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </a>
-                {% endif %}
-            </div>
+                    {% if page_obj.has_next %}
+                        <a href="?{% update_query_string request page_obj.next_page_number %}"
+                           class="pagination__link pagination__link--next">
+                            <span>Next</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
         </section>
     </div>
 </main>

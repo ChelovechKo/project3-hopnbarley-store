@@ -73,4 +73,5 @@ class ProductListView(ListView):
 
 
 class GuidesRecipesView(TemplateView):
+    """Гайды и рецепты"""
     template_name = 'guides-recipes.html'
