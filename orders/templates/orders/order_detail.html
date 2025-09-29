@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<main class="detail-order-page-wrapper">
+  <div class="detail-order-container">
+    <h1 class="detail-order-title">Order #{{ order.id }} [ {{ order.status }} ]</h1>
+
+    <p>
+      <strong>Placed on </strong> {{ order.create_at|date:"d M Y H:i" }}
+      <br>
+      <strong>Shipping address:</strong> {{ order.shipping_address }}
+    </p>
+
+    <table class="detail-order-items-table" >
+      <thead>
+        <tr>
+          <th></th>
+          <th>Product</th>
+          <th>Quantity</th>
+          <th>Price</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td>
+            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="detail-order-item__image">
+          </td>
+          <td>
+            <a href="{% url 'products:product-detail' item.product.slug %}" class="detail-order-id">{{ item.product.name }}</a>
+          </td>
+          <td>{{ item.quantity }}</td>
+          <td>${{ item.price }}</td>
+          <td>${{ item.total_price }}</td>
+        </tr>
+        {% endfor %}
+        <tfoot>
+          <tr>
+            <td></td>
+            <td colspan="3">Total</td>
+            <td>${{ order.total_price }}</td>
+          </tr>
+        </tfoot>
+      </tbody>
+    </table>
+
+  </div>
+</main>
+
+{% endblock %}

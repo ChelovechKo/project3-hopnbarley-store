@@ -28,7 +28,7 @@
               {% for order in orders %}
                 <div class="order-table-row">
                   <div class="order-table-cell">
-                    <span class="order-id">#{{ order.id }}</span>
+                    <a href="{% url 'orders:order_detail' order.id %}" class="order-id">#{{ order.id }}</a>
                     <span class="order-date">{{ order.create_at|date }}</span>
                   </div>
                   <div class="order-table-cell">

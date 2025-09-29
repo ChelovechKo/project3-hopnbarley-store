@@ -1310,6 +1310,71 @@ footer {
 
 /*
 ========================================
+    Detail Order Styles
+========================================
+*/
+.detail-order-page-wrapper {
+    background-color: var(--background-grey);
+    padding: 64px 0;
+}
+
+.detail-order-container {
+    max-width: 640px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+}
+
+.detail-order-title {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--black-main);
+}
+
+.detail-order-item__image {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.detail-order-id {
+  color: #16a34a;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.detail-order-id:hover {
+  color: #15803d;
+}
+
+/* Detail Order Items Table */
+.detail-order-items-table {
+    border-collapse: collapse;
+}
+
+.detail-order-items-table th {
+    border-bottom: 2px solid #047857;
+}
+
+.detail-order-items-table td,
+.detail-order-items-table th {
+    text-align: left;
+    padding: 0.75rem 1rem;
+}
+
+.detail-order-items-table tbody tr td {
+    border-top: 1px solid #d1fae5;
+}
+
+.detail-order-items-table tfoot td {
+    border-top: 2px solid #047857;
+    font-weight: bold;
+}
+
+/*
+========================================
     Checkout Page Styles
 ========================================
 */
@@ -1566,6 +1631,15 @@ footer {
 
 .order-date {
     color: var(--grey-text);
+}
+
+.order-id {
+  color: #16a34a;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.order-id:hover {
+  color: #15803d;
 }
 
 /* Pagination for Account Page */

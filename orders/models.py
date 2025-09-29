@@ -34,6 +34,9 @@ class OrderItem(JournalizedModel):
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
     price = models.DecimalField(max_digits=8, decimal_places=2)
 
+    def total_price(self):
+        return self.price * self.quantity
+
     def __str__(self):
         return f"OrderItem {self.id}"
 

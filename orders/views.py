@@ -4,6 +4,7 @@ from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
 from django.db import transaction
 from django.core.mail import send_mail
+from django.contrib.auth.decorators import login_required
 
 from products.models import Product
 
@@ -96,3 +97,16 @@ def checkout(request):
             'address': request.user.address,
         })
     return render(request, 'orders/checkout.html', {'cart': cart, 'form': form})
+
+
+@login_required
+def order_detail(request, pk):
+    """Страница с деталями заказа"""
+    order = get_object_or_404(Order, pk=pk, user=request.user)
+    items = order.items.select_related('product')
+
+    return render(request, 'orders/order_detail.html', {
+        'order': order,
+        'items': items,
+    })
+
