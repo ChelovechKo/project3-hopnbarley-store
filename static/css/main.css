@@ -1302,6 +1302,12 @@ footer {
     padding: 12px;
 }
 
+.button--checkout.disabled {
+    pointer-events: none;
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 /*
 ========================================
     Checkout Page Styles
