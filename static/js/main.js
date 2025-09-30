@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-
     // --- Logic for the Main Page (home.html) ---
     const homePageContent = document.querySelector('.main-content-grid');
     if (homePageContent) {
@@ -261,4 +260,105 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }
+
+    // --- Logic for Modal Review Window in Orders Info
+    let selectedRating = 0;
+    let focusedElementBeforeModal = null;
+
+    const modal = document.getElementById('review-modal');
+    const form = document.getElementById('review-form');
+    const title = document.getElementById('review-modal-title');
+    const productName = document.getElementById('review-product-name');
+    const productImg = document.getElementById('review-product-img');
+    const stars = document.querySelectorAll('#review-stars .star');
+    const headCommentEl = document.getElementById('review-head-comment');
+    const commentEl = document.getElementById('review-comment');
+    const orderIdInput = document.getElementById('review-order-id');
+    const ratingInput = document.getElementById('review-rating');
+
+    function syncHiddenRating() {
+      ratingInput.value = selectedRating || '';
+    }
+
+    function openModal(btn) {
+      focusedElementBeforeModal = document.activeElement;
+      form.action = btn.dataset.url;
+      orderIdInput.value = btn.dataset.orderId || '';
+      productName.textContent = btn.dataset.productName || '';
+      productImg.src = btn.dataset.productImage || btn.dataset.productImg || '';
+      productImg.alt = btn.dataset.productName ? `Image of ${btn.dataset.productName}` : 'Product image';
+
+      // prefill
+      const countStars = parseInt(btn.dataset.existingRating || '5', 10);
+      selectedRating = Number.isFinite(countStars) && countStars > 0 ? countStars : 5;
+      stars.forEach((s, i) => {
+        s.style.color = i < selectedRating ? '#ffc107' : '#ddd';
+      });
+      syncHiddenRating();
+
+      const headComment = btn.dataset.existingHeadComment || '';
+      const comment = btn.dataset.existingComment || '';
+      headCommentEl.value = headComment;
+      commentEl.value = comment;
+
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      form.reset();
+      selectedRating = 0;
+      syncHiddenRating();
+
+      if (focusedElementBeforeModal) { focusedElementBeforeModal.focus(); }
+    }
+
+    function rateStars(){
+        stars.forEach((star, index) => {
+            star.addEventListener('mouseover', () => {
+                stars.forEach((s, i) => {
+                    s.style.color = i <= index ? '#ffc107' : '#ddd';
+                });
+            });
+
+            star.addEventListener('mouseout', () => {
+                stars.forEach((s, i) => {
+                    s.style.color = i < selectedRating ? '#ffc107' : '#ddd';
+                });
+            });
+
+            star.addEventListener('click', () => {
+                selectedRating = index + 1;
+                stars.forEach((s, i) => {
+                    s.style.color = i < selectedRating ? '#ffc107' : '#ddd';
+                });
+                syncHiddenRating();
+            });
+        });
+    }
+
+    // open
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('.js-open-review');
+      if (btn) {
+        e.preventDefault();
+        openModal(btn);
+      }
+    });
+
+    // close
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('.js-close-review')) {
+        e.preventDefault();
+        closeModal();
+      }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    rateStars();
 });

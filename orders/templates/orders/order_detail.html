@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+{% load orders_filters %}
 
 <main class="detail-order-page-wrapper">
   <div class="detail-order-container">
@@ -19,27 +20,45 @@
           <th>Quantity</th>
           <th>Price</th>
           <th>Total</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
         {% for item in items %}
-        <tr>
-          <td>
-            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="detail-order-item__image">
-          </td>
-          <td>
-            <a href="{% url 'products:product-detail' item.product.slug %}" class="detail-order-id">{{ item.product.name }}</a>
-          </td>
-          <td>{{ item.quantity }}</td>
-          <td>${{ item.price }}</td>
-          <td>${{ item.total_price }}</td>
-        </tr>
+        {% with r=reviews_by_product|get_item:item.product.id %}
+          <tr>
+            <td>
+              <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="detail-order-item__image">
+            </td>
+            <td>
+              <a href="{% url 'products:product-detail' item.product.slug %}" class="detail-order-id">{{ item.product.name }}</a>
+            </td>
+            <td>{{ item.quantity }}</td>
+            <td>${{ item.price }}</td>
+            <td>${{ item.total_price }}</td>
+            <td>
+              <a href="#"
+                 class="button button--primary js-open-review"
+                 data-url="{% url 'products:leave_review' item.product.slug %}"
+                 data-product-name="{{ item.product.name }}"
+                 data-product-image="{{ item.product.image.url }}"
+                 data-existing-rating="{{ r.rating|default_if_none:'' }}"
+                 data-existing-head-comment="{{ r.head_comment|default_if_none:'' }}"
+                 data-existing-comment="{{ r.comment|default_if_none:'' }}"
+                 data-order-id="{{ order.id }}"
+              >
+                {% if r %}Edit review{% else %}Leave review{% endif %}
+              </a>
+            </td>
+          </tr>
+        {% endwith %}
         {% endfor %}
         <tfoot>
           <tr>
             <td></td>
             <td colspan="3">Total</td>
             <td>${{ order.total_price }}</td>
+            <td></td>
           </tr>
         </tfoot>
       </tbody>
@@ -47,5 +66,50 @@
 
   </div>
 </main>
+
+{# --- Modal --- #}
+<div class="modal" id="review-modal" aria-hidden="true">
+  <div class="modal__backdrop js-close-review"></div>
+  <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="review-modal-title">
+    <button class="modal__close js-close-review" aria-label="Close">×</button>
+    <h2 id="review-modal-title">Leave a review</h2>
+
+    <div class="modal__product" id="review-product">
+      <img id="review-product-img" src="" alt="" class="modal__product-img" width="56" height="56" loading="lazy">
+      <div class="modal__product-meta">
+        <div class="modal__product-name" id="review-product-name"></div>
+
+        <div class="modal__existing-rating" id="review-stars">
+          <span class="star" data-value="1">★</span>
+          <span class="star" data-value="2">★</span>
+          <span class="star" data-value="3">★</span>
+          <span class="star" data-value="4">★</span>
+          <span class="star" data-value="5">★</span>
+        </div>
+      </div>
+    </div>
+
+    <form id="review-form" method="post" action="#">
+      {% csrf_token %}
+      <input type="hidden" name="order_id" id="review-order-id">
+      <input type="hidden" name="rating" id="review-rating" value="">
+
+      <div class="form-row">
+        <input id="review-head-comment" name="head_comment" type="text"
+               class="Input" placeholder="Review title" maxlength="100" inputmode="text" required>
+      </div>
+
+      <div class="form-row">
+        <textarea id="review-comment" name="comment" rows="4"
+                  class="Textarea" placeholder="Review Description" required></textarea>
+      </div>
+
+      <div class="modal__actions">
+        <button type="button" class="button button--secondary js-close-review">Cancel</button>
+        <button type="submit" class="button button--primary">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
 
 {% endblock %}

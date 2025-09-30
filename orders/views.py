@@ -6,7 +6,7 @@ from django.db import transaction
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
 
-from products.models import Product
+from products.models import Product, Review
 
 from orders.cart import Cart
 from orders.forms import CheckoutForm
@@ -105,8 +105,13 @@ def order_detail(request, pk):
     order = get_object_or_404(Order, pk=pk, user=request.user)
     items = order.items.select_related('product')
 
+    # User's reviews
+    product_ids = items.values_list('product_id', flat=True)
+    reviews = Review.objects.filter(user=request.user, product_id__in=product_ids)
+    reviews_by_product = {r.product_id: r for r in reviews}
+
     return render(request, 'orders/order_detail.html', {
         'order': order,
         'items': items,
+        'reviews_by_product': reviews_by_product,
     })
-

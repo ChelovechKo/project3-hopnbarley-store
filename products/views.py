@@ -1,8 +1,12 @@
-from django.views.generic import DetailView, ListView, TemplateView
-from products.models import Product, Review, Category
+from django.shortcuts import redirect, get_object_or_404
 from django.db.models import Avg, Q
 from config.settings import PRODUCTS_QUERY_MAP
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+
 from orders.cart import Cart
+from django.views.generic import DetailView, ListView, TemplateView
+from products.models import Product, Review, Category
 
 
 class ProductDetailView(DetailView):
@@ -70,6 +74,31 @@ class ProductListView(ListView):
         ]
 
         return context
+
+
+@require_POST
+@login_required
+def leave_review(request, slug):
+    """Создание отзыва на продукт"""
+    product = get_object_or_404(Product, slug=slug)
+    head_comment = request.POST.get('head_comment')
+    comment = request.POST.get('comment')
+    rating = int(request.POST.get('rating'))
+
+    Review.objects.update_or_create(
+        product=product,
+        user=request.user,
+        defaults={
+            'rating': rating,
+            'head_comment': head_comment,
+            'comment': comment,
+        }
+    )
+
+    order_id = int(request.POST.get('order_id'))
+    if order_id:
+        return redirect('orders:order_detail', pk=order_id)
+    return redirect('products:product-detail', slug=product.slug)
 
 
 class GuidesRecipesView(TemplateView):

@@ -138,6 +138,7 @@ header {
     align-items: center;
     justify-content: center;
     border: none;
+    white-space: nowrap;
 }
 
 .button--secondary {
@@ -627,8 +628,6 @@ footer {
     object-fit: cover;
 }
 
-
-
 .auth-form-container {
     position: relative;
     z-index: 2;
@@ -692,7 +691,7 @@ footer {
     color: var(--black-main);
 }
 
-.Input:focus {
+.Input:focus, .Textarea:focus {
     outline: none;
     border-color: var(--green);
     box-shadow: 0 0 0 3px rgba(2, 84, 45, 0.2);
@@ -941,6 +940,13 @@ footer {
     gap: 8px;
 }
 
+.review-stars {
+    display: flex;
+    gap: 4px;
+    color: #FFC107;
+    font-size: 20px;
+}
+
 .add-to-cart-button .fa-check {
     display: none;
 }
@@ -1040,13 +1046,6 @@ footer {
     display: flex;
     flex-direction: column;
     gap: 24px;
-}
-
-.review-rating {
-    display: flex;
-    gap: 4px;
-    color: #FFC107;
-    font-size: 20px;
 }
 
 .review-body {
@@ -1371,6 +1370,101 @@ footer {
 .detail-order-items-table tfoot td {
     border-top: 2px solid #047857;
     font-weight: bold;
+}
+
+/*
+========================================
+    Modal Review Window in Orders Info
+========================================
+*/
+
+.modal[aria-hidden="true"] {
+    display: none;
+}
+
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+}
+
+.modal__backdrop {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,.35);
+}
+
+.modal__dialog {
+    position: relative;
+    max-width: 520px; margin: 10vh auto 0;
+    background: #fff; border-radius: 12px; padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.15);
+}
+
+.modal__close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: transparent;
+    border: 0;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.modal__product {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 12px;
+  align-items: center;
+  margin: 6px 0 14px;
+}
+
+.modal__product-img {
+  width: 56px; height: 56px; object-fit: cover;
+  border-radius: 8px; background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+}
+
+.modal__product-meta {
+    display: grid;
+    gap: 4px;
+}
+
+.modal__product-name {
+    font-weight: 600;
+    color: #047857;
+    line-height: 1.2;
+}
+
+.modal__actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 12px;
+}
+
+.modal__existing-rating {
+    font-size: 25px;
+    color: #ddd;
+    cursor: pointer;
+    display: inline-flex;
+}
+
+.modal__existing-rating .star {
+    transition: color 0.2s ease;
+}
+
+.modal__existing-rating .star:hover ~ .star,
+.modal__existing-rating .star ~ .star {
+    color: #ffc107;
+}
+
+.modal__existing-rating .star,
+.modal__existing-rating .star ~ .star {
+    color: #ffc107;
+}
+
+.form-row + .form-row {
+  margin-top: 12px;
 }
 
 /*
