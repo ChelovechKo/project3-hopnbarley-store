@@ -435,6 +435,7 @@ header {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    height: 100%;
 }
 
 .product-card:hover {
@@ -454,6 +455,7 @@ header {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    flex: 1;
 }
 
 .product-card__name {
@@ -1040,6 +1042,7 @@ footer {
     display: flex;
     flex-direction: column;
     gap: 24px;
+    min-height: 220px;
 }
 
 .review-rating {
@@ -1069,6 +1072,7 @@ footer {
 }
 
 .review-author {
+    margin-top: auto;
     display: flex;
     align-items: center;
     gap: 12px;
