@@ -1,11 +1,13 @@
-{# templates/orders/checkout_success.html #}
 {% extends 'base.html' %}
 {% block content %}
 <main class="static-page-wrapper">
   <div class="container">
     <div class="static-page-content">
       <h1 class="static-page-title">Thank you!</h1>
-      <p class="static-page-subtitle">Your order #{{ order.id }} has been placed.</p>
+      <p class="static-page-subtitle">
+        Your order
+        <a href="{% url 'orders:order_detail' order.id %}" class="order-id">#{{ order.id }}</a>
+        has been placed.</p>
       <div class="static-page-text">
         <p>Status: {{ order.status }}</p>
         <p>Total: ${{ order.total_price|floatformat:2 }}</p>
