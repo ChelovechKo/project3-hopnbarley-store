@@ -20,7 +20,7 @@ class ProductDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['reviews'] = Review.objects.filter(product=self.object)
+        context['reviews'] = Review.objects.filter(product=self.object)[:3]
 
         cart = Cart(self.request)
         raw = cart.cart.get(str(self.object.id), {})
