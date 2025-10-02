@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 from django.views.generic import CreateView, TemplateView, UpdateView
 from django.urls import reverse_lazy
 from django.core.paginator import Paginator
@@ -18,7 +20,7 @@ class AccountView(LoginRequiredMixin, TemplateView):
     template_name = 'users/account.html'
     allow_empty = True
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context['form'] = UserUpdateForm(instance=self.request.user)
 
