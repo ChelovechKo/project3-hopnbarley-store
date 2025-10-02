@@ -62,7 +62,16 @@
                         <div class="product-card">
                             <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-card__image">
                             <div class="product-card__info">
-                                <h4 class="product-card__name">{{ product.name }}</h4>
+                                <h4 class="product-card__name">
+                                    {{ product.name }}
+                                    {% if product.stock > 0 %}
+                                        <span class="stock-status">
+                                            {% if product.stock > 50 %}50+{% else %}{{ product.stock }}{% endif %} in stock 🟢
+                                        </span>
+                                    {% else %}
+                                        <span class="stock-status">Out of stock 🔴</span>
+                                    {% endif %}
+                                </h4>
                                 <p class="product-card__price">${{ product.price }}</p>
                                 <p class="product-card__price">⭐{{ product.avg_rating|floatformat:2|default:"—" }}</p>
                                 <p class="product-card__description">{{ product.description|truncatechars:70 }}</p>

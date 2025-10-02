@@ -5,6 +5,9 @@ from django.views.generic import TemplateView
 from django.db import transaction
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.db.models import F
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 
 from products.models import Product, Review
 
@@ -18,39 +21,40 @@ class CartDetail(TemplateView):
 
 
 @require_POST
-def cart_change(request, product_id):
+def cart_change(request: HttpRequest, product_id: int) -> HttpResponseRedirect:
     """Изменение количества товара в корзине"""
     cart = Cart(request)
-    product = get_object_or_404(Product, id=product_id)
-    action = request.POST.get('action', 'increase')
+    product = get_object_or_404(Product, id=product_id, is_active=True)
+    action = request.POST.get('action')
 
-    if action == 'increase':
+    stock = max(int(product.stock or 0), 0)
+    current_qty = cart.get_quantity(product)
+
+    if action == 'increase' and stock >= current_qty + 1:
         cart.change_quantity(product, 1)
     elif action == 'decrease':
         cart.change_quantity(product, -1)
     elif action == 'remove':
         cart.remove(product)
-    else:
-        pass
 
     next_url = request.GET.get('next')
     return redirect(next_url or 'orders:cart_detail')
 
 
-def cart_remove(request, product):
+def cart_remove(request: HttpRequest, product: Product) -> HttpResponseRedirect:
     """Очистка корзины"""
     cart = Cart(request)
     cart.remove(product)
     return redirect('orders:cart_detail')
 
 
-def cart_detail(request):
+def cart_detail(request: HttpRequest) -> HttpResponse:
     """Отображение корзины"""
     cart = Cart(request)
     return render(request, 'orders/cart_detail.html', {'cart': cart})
 
 
-def checkout(request):
+def checkout(request: HttpRequest) -> HttpResponse:
     """Оформление заказа"""
     cart = Cart(request)
     if request.method == 'POST':
@@ -61,12 +65,37 @@ def checkout(request):
             status = OrderStatus.PAID if cd['payment_method'] != 'cod' else OrderStatus.PENDING
 
             with transaction.atomic():
+                # Блокируем продукты, которые есть в корзине
+                items = list(cart)
+                product_ids = [i['product'].id for i in items]
+                products_locked = (
+                    Product.objects.select_for_update()
+                    .filter(id__in=product_ids, is_active=True)
+                )
+                products_by_id = {p.id: p for p in products_locked}
+
+                # Валидация остатков
+                for it in items:
+                    p = products_by_id.get(it['product'].id)
+                    if not p or it['quantity'] <= 0 or it['quantity'] > p.stock:
+                        messages.error(request, f"Not enough stock for {it['product'].name}.")
+                        return redirect('orders:cart_detail')
+
+                # Списание остатков
+                for it in items:
+                    p = products_by_id[it['product'].id]
+                    p.stock = F('stock') - it['quantity']
+                    p.save(update_fields=['stock'])
+
+                # Создание ордера в БД
                 order = Order.objects.create(
                     user=request.user,
                     status=status,
                     total_price=cart.get_total_price(),
                     shipping_address=shipping_address,
                 )
+
+                # Добавление продуктов в ордер в БД
                 for item in cart:
                     OrderItem.objects.create(
                         order=order,
@@ -100,7 +129,7 @@ def checkout(request):
 
 
 @login_required
-def order_detail(request, pk):
+def order_detail(request: HttpRequest, pk: int) -> HttpResponse:
     """Страница с деталями заказа"""
     order = get_object_or_404(Order, pk=pk, user=request.user)
     items = order.items.select_related('product')

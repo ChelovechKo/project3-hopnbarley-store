@@ -141,6 +141,12 @@ header {
     white-space: nowrap;
 }
 
+.button:disabled,
+.button[disabled] {
+  cursor: default;
+  pointer-events: none;
+}
+
 .button--secondary {
     background-color: var(--border-default);
     border: 1px solid var(--border-dark-grey);
@@ -464,6 +470,8 @@ header {
     line-height: 1.4;
     color: var(--black-main);
     font-weight: 600;
+    display: flex;
+    justify-content: space-between;
 }
 
 .product-card__price {
@@ -900,6 +908,8 @@ footer {
     font-weight: 600;
     line-height: 1.2;
     color: var(--black-main);
+    display: flex;
+    justify-content: space-between;
 }
 
 .price-section {
@@ -952,15 +962,24 @@ footer {
 .add-to-cart-button .fa-check {
     display: none;
 }
+
 .add-to-cart-button.is-added {
     background-color: var(--dark-green);
     cursor: default;
 }
+
 .add-to-cart-button.is-added .fa-cart-shopping {
     display: none;
 }
+
 .add-to-cart-button.is-added .fa-check {
     display: inline-block;
+}
+
+.stock-status {
+    font-size: 0.8rem;
+    margin-left: 8px;
+    font-weight: 500;
 }
 
 /* --- Accordion Section  --- */
@@ -1133,6 +1152,17 @@ footer {
 
 .quantity-btn:hover {
     background-color: var(--slate-200);
+}
+
+.quantity-btn.is-disabled,
+.quantity-btn[disabled] {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.out-of-stock-label {
+    font-weight: 600;
 }
 
 .quantity-value {

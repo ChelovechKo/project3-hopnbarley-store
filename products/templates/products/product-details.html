@@ -14,7 +14,12 @@
       </div>
       <div class="product-info-column">
         <div class="product-title-price">
-          <h1 class="product-name">{{ product.name }}</h1>
+          <h1 class="product-name">
+            {{ product.name }}
+            {% if product.stock > 0 %}
+              <span class="stock-status">{{ product.stock }} in stock 🟢</span>
+            {% endif %}
+          </h1>
           <div class="price-section">
             <span class="price-tag">per 1 lb</span>
             <p class="product-price">${{ product.price }}</p>
@@ -28,25 +33,39 @@
         <div class="cart-controls">
           <form action="{% url 'orders:cart_change' product.id %}?next={{ request.path }}" method="post">
             {% csrf_token %}
+            {% with qty=item.quantity|default:0 %}
+              <button
+                type="submit"
+                id="add-to-cart-btn"
+                class="button button--{% if product.stock > 0 %}primary{% else %}secondary{% endif %} add-to-cart-button {% if product.id|stringformat:'s' in cart.cart %}is-hidden{% endif %}"
+                name="action" value="increase"
+                {% if product.stock == 0 %}disabled{% endif %}
+              >
+                {% if product.stock > 0 %}
+                  <i class="fa-solid fa-cart-shopping"></i>
+                  <span>Add to Cart</span>
+                {% else %}
+                  <span>Out of stock</span>
+                {% endif %}
+              </button>
 
-            <button type="submit"
-                    class="button button--primary add-to-cart-button is-hidden "
-                    id="add-to-cart-btn">
-              <i class="fa-solid fa-cart-shopping"></i>
-              <span>Add to Cart</span>
-            </button>
-            <div class="quantity-counter {% if product.id|stringformat:'s' not in cart.cart %} is-hidden {% endif %}"
-                 id="quantity-counter">
-              <button type="submit" name="action" value="decrease"
-                      class="quantity-btn" data-action="decrease"
-                      aria-label="Decrease quantity"><i class="fa-solid fa-minus"></i></button>
-              <span class="quantity-value" data-qty="{{ item.quantity|default:0 }}">
-                {{ item.quantity }} in cart
-              </span>
-              <button type="submit" name="action" value="increase"
-                      class="quantity-btn" data-action="increase"
-                      aria-label="Increase quantity"><i class="fa-solid fa-plus"></i></button>
-            </div>
+              <div class="quantity-counter {% if product.id|stringformat:'s' not in cart.cart %} is-hidden {% endif %}"
+                   id="quantity-counter">
+                <button type="submit" name="action" value="decrease"
+                        class="quantity-btn" data-action="decrease"
+                        aria-label="Decrease quantity"><i class="fa-solid fa-minus"></i></button>
+                <span class="quantity-value" data-qty="{{ qty }}">
+                  {{ qty }} in cart
+                </span>
+                <button type="submit" name="action" value="increase"
+                        class="quantity-btn"
+                        data-action="increase"
+                        aria-label="Increase quantity"
+                        {% if qty >= product.stock %} disabled class="is-disabled" {% endif %}>
+                  <i class="fa-solid fa-plus"></i>
+                </button>
+              </div>
+            {% endwith %}
           </form>
         </div>
 
