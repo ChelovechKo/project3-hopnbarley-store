@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from .models import Product, Category, Review
+from typing import ClassVar
+
+from products.models import Product, Category, Review
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -20,7 +22,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(read_only=True)
+    user: ClassVar[serializers.Field] = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Review

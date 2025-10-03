@@ -1,24 +1,23 @@
 from __future__ import annotations
-
 from decimal import Decimal
 from typing import Any, Dict, Iterator, TypedDict
-
 from django.conf import settings
 from django.http import HttpRequest
+
 from products.models import Product
 
 
 class StoredCartItem(TypedDict):
     """Хранение товара в сессии"""
     quantity: int
-    price: str  # цена в виде строки, как приходит из Decimal
+    price: str
 
 
 class Cart:
     def __init__(self, request: HttpRequest) -> None:
         """Инициализация корзины"""
         self.session = request.session
-        self.cart = self.session.get(settings.CART_SESSION_ID, {})
+        self.cart: Dict[str, StoredCartItem] = self.session.get(settings.CART_SESSION_ID, {})
 
     def get_quantity(self, product: Product) -> int:
         """Текущее кол-во товара в корзине"""
@@ -61,11 +60,9 @@ class Cart:
         for pid, data in self.cart.items():
             product = products_by_id.get(pid)
             if not product:
-                # если товара уже нет — просто пропускаем
                 continue
             price = Decimal(data['price'])
             quantity = int(data['quantity'])
-            # возвращаем СЛЕПОК, не трогая self.cart
             yield {
                 'product': product,
                 'price': price,
@@ -79,7 +76,7 @@ class Cart:
 
     def get_total_price(self) -> Decimal:
         """Подсчет стоимости товаров в корзине"""
-        return sum(Decimal(item['price']) * item['quantity'] for item in self.cart.values())
+        return sum((Decimal(item['price']) * item['quantity'] for item in self.cart.values()), Decimal("0"))
 
     def save(self) -> None:
         """Обновление сессии"""

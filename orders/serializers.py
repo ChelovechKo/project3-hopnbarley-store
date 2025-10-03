@@ -1,10 +1,11 @@
+from typing import Any, Dict
 from decimal import Decimal
-from django.db import transaction
-from django.db.models import F
+from django.db import transaction, models
 from rest_framework import serializers
-from .models import Order, OrderItem, OrderStatus
-from orders.cart import Cart
+
+from orders.models import Order, OrderItem, OrderStatus
 from products.models import Product
+from orders.cart import Cart
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -27,14 +28,14 @@ class OrderCreateSerializer(serializers.Serializer):
     address = serializers.CharField()
     payment_method = serializers.ChoiceField(choices=[("cod","cod"),("card","card")], default="cod")
 
-    def validate(self, attrs):
+    def validate(self, attrs: Dict[str, Any]) -> Dict[str, Any]:
         request = self.context["request"]
         cart = Cart(request)
         if len(cart) == 0:
             raise serializers.ValidationError("Корзина пуста.")
         return attrs
 
-    def create(self, validated_data):
+    def create(self, validated_data: Dict[str, Any]) -> Order:
         request = self.context["request"]
         cart = Cart(request)
         items = list(cart)
@@ -56,7 +57,7 @@ class OrderCreateSerializer(serializers.Serializer):
             # списываем остатки
             for it in items:
                 p = products_by_id[it["product"].id]
-                p.stock = F("stock") - it["quantity"]
+                p.stock = models.F("stock") - it["quantity"]
                 p.save(update_fields=["stock"])
 
             # создаём ордер
@@ -81,6 +82,6 @@ class OrderCreateSerializer(serializers.Serializer):
 
         return order
 
-    def to_representation(self, instance):
+    def to_representation(self, instance: Order) -> Dict[str, Any]:
         from .serializers import OrderSerializer
         return OrderSerializer(instance, context=self.context).data

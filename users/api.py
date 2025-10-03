@@ -1,5 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.request import Request
 from rest_framework import status
 from .serializers import RegisterSerializer
 
@@ -8,7 +9,7 @@ class RegisterView(APIView):
     authentication_classes = []
     permission_classes = []
 
-    def post(self, request):
+    def post(self, request: Request) -> Response:
         ser = RegisterSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
         ser.save()

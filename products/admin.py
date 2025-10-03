@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.http import urlencode
 
-from .models import Category, Product, Review
+from products.models import Category, Product, Review
 
 
 class ReviewInline(admin.TabularInline):
@@ -26,17 +26,17 @@ class ProductAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
 
     @admin.display(description='Image')
-    def image_thumb(self, obj):
+    def image_thumb(self, obj: Product) -> str:
         if obj.image:
             return format_html('<img src="{}" style="height:40px;border-radius:4px;" />', obj.image.url)
         return '—'
 
     @admin.display(description='Reviews')
-    def reviews_count(self, obj):
+    def reviews_count(self, obj: Product) -> int:
         return obj.reviews.count()
 
     @admin.display(description='Open reviews')
-    def reviews_link(self, obj):
+    def reviews_link(self, obj: Product) -> str:
         url = reverse('admin:products_review_changelist')
         query = urlencode({'product__id__exact': obj.pk})
         return format_html('<a href="{}?{}">Open ({})</a>', url, query, obj.reviews.count())

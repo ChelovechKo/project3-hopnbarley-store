@@ -1,3 +1,4 @@
+from typing import Any
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth import get_user_model
@@ -23,15 +24,15 @@ class Category(JournalizedModel):
         verbose_name = 'category'
         verbose_name_plural = 'categories'
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
-    def save(self, *args, **kwargs):
+    def save(self, *args: Any, **kwargs: Any) -> None:
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         return f'/products/category/{self.slug}/'
 
 
@@ -49,13 +50,13 @@ class Product(JournalizedModel):
         verbose_name = 'product'
         verbose_name_plural = 'products'
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         return reverse('products:product-detail', kwargs={'slug': self.slug})
     
-    def save(self, *args, **kwargs):
+    def save(self, *args: Any, **kwargs: Any) -> None:
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
@@ -68,5 +69,5 @@ class Review(JournalizedModel):
     head_comment = models.TextField(max_length=100, null=True, blank=True)
     comment = models.TextField(null=True, blank=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{self.rating} - {self.head_comment}'

@@ -1,11 +1,11 @@
 from typing import Any, Dict
-
 from django.views.generic import CreateView, TemplateView, UpdateView
 from django.urls import reverse_lazy
 from django.core.paginator import Paginator
-from .forms import UserRegistrationForm, UserUpdateForm
-from .mixins import LoginRequiredMixin
-from .models import User
+
+from users.forms import UserRegistrationForm, UserUpdateForm
+from users.mixins import LoginRequiredMixin
+from users.models import User
 
 
 class UserCreateView(CreateView):
@@ -22,9 +22,13 @@ class AccountView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context['form'] = UserUpdateForm(instance=self.request.user)
 
-        orders_qs = self.request.user.orders.order_by('-create_at')
+        assert self.request.user.is_authenticated
+        user = self.request.user
+
+        context['form'] = UserUpdateForm(instance=user)
+
+        orders_qs = user.orders.order_by('-create_at')
         paginator = Paginator(orders_qs, 10)
         page_number = self.request.GET.get('page')
         page_obj = paginator.get_page(page_number)

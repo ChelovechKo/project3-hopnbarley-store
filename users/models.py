@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from .validators import validate_phone
+from users.validators import validate_phone
 
 
 class User(AbstractUser):
@@ -24,5 +24,5 @@ class User(AbstractUser):
         verbose_name_plural = 'Users'
         ordering = ['email']
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.email

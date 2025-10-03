@@ -1,12 +1,14 @@
+from typing import Any, Dict, Optional, Mapping
+from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import redirect, get_object_or_404
-from django.db.models import Avg, Q
+from django.db.models import QuerySet, Avg, Q
 from config.settings import PRODUCTS_QUERY_MAP
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-
-from orders.cart import Cart
 from django.views.generic import DetailView, ListView, TemplateView
+
 from products.models import Product, Review, Category
+from orders.cart import Cart
 
 
 class ProductDetailView(DetailView):
@@ -15,15 +17,15 @@ class ProductDetailView(DetailView):
     model = Product
     template_name = 'products/product-details.html'
 
-    def get_object(self, queryset=None):
+    def get_object(self, queryset: Optional[Any] = None) -> Product:
         return Product.objects.get(slug=self.kwargs['slug'])
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context['reviews'] = Review.objects.filter(product=self.object)[:3]
 
         cart = Cart(self.request)
-        raw = cart.cart.get(str(self.object.id), {})
+        raw: Mapping[str, Any] = cart.cart.get(str(self.object.id), {})
         context['item'] = {
             'quantity': raw.get('quantity', 0),
             'price': raw.get('price'),
@@ -38,7 +40,7 @@ class ProductListView(ListView):
     paginate_by = 9
     allow_empty = True
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Product]:
         qs = Product.objects.filter(is_active=True) \
             .select_related('category') \
             .annotate(avg_rating=Avg('reviews__rating'))
@@ -60,9 +62,9 @@ class ProductListView(ListView):
         qs_key = self.request.GET.get('sort', 'new')
         qs = qs.order_by(PRODUCTS_QUERY_MAP[qs_key])
 
-        return list(qs)
+        return qs
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
 
@@ -78,12 +80,15 @@ class ProductListView(ListView):
 
 @require_POST
 @login_required
-def leave_review(request, slug):
+def leave_review(request: HttpRequest, slug: str) -> HttpResponseRedirect:
     """Создание отзыва на продукт"""
     product = get_object_or_404(Product, slug=slug)
-    head_comment = request.POST.get('head_comment')
-    comment = request.POST.get('comment')
-    rating = int(request.POST.get('rating'))
+    head_comment = request.POST.get('head_comment') or ""
+    comment = request.POST.get('comment') or ""
+    try:
+        rating = int(request.POST.get('rating') or "")
+    except (TypeError, ValueError):
+        rating = 0
 
     Review.objects.update_or_create(
         product=product,
@@ -95,7 +100,10 @@ def leave_review(request, slug):
         }
     )
 
-    order_id = int(request.POST.get('order_id'))
+    try:
+        order_id = int(request.POST.get('order_id') or "")
+    except (TypeError, ValueError):
+        order_id = 0
     if order_id:
         return redirect('orders:order_detail', pk=order_id)
     return redirect('products:product-detail', slug=product.slug)

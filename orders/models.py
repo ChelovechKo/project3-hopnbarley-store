@@ -1,6 +1,8 @@
+from decimal import Decimal
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.contrib.auth import get_user_model
+
 from products.models import JournalizedModel
 
 
@@ -19,7 +21,7 @@ class Order(JournalizedModel):
     total_price = models.DecimalField(max_digits=8, decimal_places=2)
     shipping_address = models.TextField(max_length=200)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Order {self.id}"
 
     class Meta:
@@ -34,10 +36,10 @@ class OrderItem(JournalizedModel):
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
     price = models.DecimalField(max_digits=8, decimal_places=2)
 
-    def total_price(self):
+    def total_price(self) -> Decimal:
         return self.price * self.quantity
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"OrderItem {self.id}"
 
     class Meta:

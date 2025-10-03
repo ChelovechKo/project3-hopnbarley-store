@@ -27,7 +27,41 @@ pytest = "^8.3.4"  # Исправлено: убрано "django"
 ipython = "^9.4.0"
 django-extensions = "^4.1"
 django-debug-toolbar = "^6.0.0"
+django-stubs = "^5.2.5"
+djangorestframework-stubs = "^3.16.4"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+python_version = "3.12"
+plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
+disallow_untyped_defs = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_return_any = true
+no_implicit_optional = true
+pretty = true
+exclude = '''(?x)(
+    ^venv/|
+    ^\.venv/|
+    ^static/|
+    ^media/|
+    ^\.mypy_cache/|
+    ^\.pytest_cache/|
+    ^\.git/|
+    ^.*?/migrations/
+)'''
+
+[[tool.mypy.overrides]]
+module = ["*.migrations.*"]
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = ["orders.cart"]
+warn_return_any = false
+
+[tool.django-stubs]
+django_settings_module = "config.settings"
+strict_settings = true

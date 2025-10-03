@@ -1,12 +1,14 @@
-from django.contrib.auth.forms import UserCreationForm
 from django import forms
-from users.models import User
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import get_user_model
+from typing import Any, Dict
+
+UserModel = get_user_model()
 
 
 class UserRegistrationForm(UserCreationForm):
-    class Meta(UserCreationForm.Meta):
-        # TODO: потерялись стили для полей с паролями
-        model = User
+    class Meta:
+        model = UserModel
         fields = ('email', 'username', 'first_name', 'last_name', 'password1', 'password2')
         widgets = {
             'email': forms.EmailInput(attrs={'placeholder': 'example@gmail.com', 'class': 'Input'}),
@@ -26,17 +28,20 @@ class UserRegistrationForm(UserCreationForm):
             'password2': 'Confirm Password'
         }
 
-    def clean(self):
+    def clean(self) -> Dict[str, Any]:
         cleaned_data = super().clean()
+        if cleaned_data is None:
+            return {}
         password1 = cleaned_data.get('password1')
         password2 = cleaned_data.get('password2')
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError("Passwords do not match")
         return cleaned_data
 
-    def clean_email(self):
-        email = self.cleaned_data.get("email")
-        if User.objects.filter(email=email).exists():
+    def clean_email(self) -> str:
+        email = self.cleaned_data.get("email") or ""
+        email = str(email)
+        if UserModel.objects.filter(email=email).exists():
             raise forms.ValidationError("This email is already in use.")
         return email
 
@@ -48,7 +53,7 @@ class UserLoginForm(forms.Form):
 
 class UserUpdateForm(forms.ModelForm):
     class Meta:
-        model = User
+        model = UserModel
         fields = ('email', 'username', 'first_name', 'last_name', 'phone', 'city', 'address')
         widgets = {
             'email': forms.EmailInput(

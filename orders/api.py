@@ -1,16 +1,18 @@
-from rest_framework import viewsets
+from typing import Any
 from django.shortcuts import get_object_or_404
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema, extend_schema_view
+from config.permissions import IsAuthenticatedOrSessionForCart, IsOwner
+from rest_framework import serializers, status, viewsets
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.db.models.query import QuerySet
 
-from .models import Order
-from .serializers import OrderSerializer, OrderCreateSerializer
-from config.permissions import IsOwner
+from orders.serializers import OrderSerializer, OrderCreateSerializer
 from orders.cart import Cart
 from products.models import Product
-from config.permissions import IsAuthenticatedOrSessionForCart
+from orders.models import Order
 
 
 @extend_schema_view(
@@ -24,37 +26,52 @@ class OrderViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsOwner]
     queryset = Order.objects.all()
 
-    def get_queryset(self):
-        return Order.objects.filter(user=self.request.user).prefetch_related("items", "items__product")
+    def get_queryset(self) -> QuerySet[Order]:
+        request: Request = self.request
+        assert request.user.is_authenticated
+        return (
+            Order.objects
+            .filter(user_id=request.user.id)
+            .prefetch_related("items", "items__product")
+        )
 
-    def get_serializer_class(self):
+    def get_serializer_class(self) -> type[serializers.BaseSerializer]:
         return OrderCreateSerializer if self.action == "create" else OrderSerializer
 
-    def perform_create(self, serializer):
+    def perform_create(self, serializer: serializers.BaseSerializer) -> None:
         serializer.save(user=self.request.user)
 
 
 class CartView(APIView):
     permission_classes = [IsAuthenticatedOrSessionForCart]
 
-    def get(self, request):
+    def _serialize_cart(self, request: Request) -> dict[str, Any]:
         cart = Cart(request)
-        items = []
-        total = cart.get_total_price()
-        for it in cart:
-            items.append({
-                "product": it["product"].id,
-                "name": it["product"].name,
-                "price": str(it["price"]),
-                "quantity": it["quantity"],
-                "total_price": str(it["total_price"]),
-            })
-        return Response({"items": items, "total": str(total)})
+        items = [{
+            "product": it["product"].id,
+            "name": it["product"].name,
+            "price": str(it["price"]),
+            "quantity": it["quantity"],
+            "total_price": str(it["total_price"]),
+        } for it in cart]
+        return {"items": items, "total": str(cart.get_total_price())}
 
-    def post(self, request):
+    def get(self, request: Request) -> Response:
+        return Response(self._serialize_cart(request))
+
+    def post(self, request: Request, pk: int) -> Response:
         """Добавить/изменить позицию: {product_id, action: increase|decrease|remove}"""
-        product_id = int(request.data.get("product_id"))
-        action = request.data.get("action", "increase")
+        raw_id = request.data.get("product_id")
+        if raw_id is None:
+            return Response({"detail": "product_id is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        action = str(request.data.get("action", "increase"))
+
+        try:
+            product_id = int(raw_id)
+        except (TypeError, ValueError):
+            return Response({"detail": "product_id must be int"}, status=status.HTTP_400_BAD_REQUEST)
+
         product = get_object_or_404(Product, id=product_id, is_active=True)
 
         cart = Cart(request)
@@ -66,22 +83,36 @@ class CartView(APIView):
             cart.remove(product)
         else:
             return Response({"detail": "unknown action"}, status=status.HTTP_400_BAD_REQUEST)
-        return self.get(request)
 
-    def patch(self, request):
+        return Response(self._serialize_cart(request))
+
+    def patch(self, request: Request) -> Response:
         """Установить точное количество: {product_id, quantity}"""
-        product_id = int(request.data.get("product_id"))
-        qty = int(request.data.get("quantity"))
+        raw_id = request.data.get("product_id")
+        if raw_id is None:
+            return Response({"detail": "product_id is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        raw_qty = request.data.get("quantity")
+        if raw_qty is None:
+            return Response({"detail": "quantity is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            product_id = int(raw_id)
+            qty = int(raw_qty)
+        except (TypeError, ValueError):
+            return Response({"detail": "product_id and quantity must be int"}, status=status.HTTP_400_BAD_REQUEST)
+
         product = get_object_or_404(Product, id=product_id, is_active=True)
         cart = Cart(request)
 
-        # нормализуем до нужного количества
         current = cart.get_quantity(product)
-        cart.change_quantity(product, qty - current)
-        return self.get(request)
+        delta = qty - current
+        if delta != 0:
+            cart.change_quantity(product, delta)
 
-    def delete(self, request):
+        return Response(self._serialize_cart(request))
+
+    def delete(self, request: Request) -> Response:
         """Очистить корзину"""
-        cart = Cart(request)
-        cart.clear()
+        Cart(request).clear()
         return Response(status=status.HTTP_204_NO_CONTENT)

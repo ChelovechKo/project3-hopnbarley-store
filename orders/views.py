@@ -2,18 +2,20 @@ from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
-from django.db import transaction
+from django.db import transaction, models
 from django.core.mail import send_mail
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.db.models import F
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-
-from products.models import Product, Review
+from django.contrib.auth import get_user_model
 
 from orders.cart import Cart
 from orders.forms import CheckoutForm
 from orders.models import Order, OrderItem, OrderStatus
+from products.models import Product, Review
+
+
+
+User = get_user_model()
 
 
 class CartDetail(TemplateView):
@@ -57,6 +59,9 @@ def cart_detail(request: HttpRequest) -> HttpResponse:
 def checkout(request: HttpRequest) -> HttpResponse:
     """Оформление заказа"""
     cart = Cart(request)
+    assert request.user.is_authenticated
+    user = request.user
+
     if request.method == 'POST':
         form = CheckoutForm(request.POST)
         if form.is_valid():
@@ -84,12 +89,12 @@ def checkout(request: HttpRequest) -> HttpResponse:
                 # Списание остатков
                 for it in items:
                     p = products_by_id[it['product'].id]
-                    p.stock = F('stock') - it['quantity']
+                    p.stock = models.F('stock') - it['quantity']
                     p.save(update_fields=['stock'])
 
                 # Создание ордера в БД
                 order = Order.objects.create(
-                    user=request.user,
+                    user=user,
                     status=status,
                     total_price=cart.get_total_price(),
                     shipping_address=shipping_address,
@@ -113,30 +118,31 @@ def checkout(request: HttpRequest) -> HttpResponse:
                     f"Status: {order.status}\n"
                     f"Total: ${order.total_price}\n\n"
                 )
-                recipient = [request.user.email]
+                recipient = [user.email]
                 send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, recipient)
 
             return render(request, 'orders/checkout_success.html', {'order': order})
     else:
         form = CheckoutForm(initial={
-            'first_name': request.user.first_name,
-            'last_name': request.user.last_name,
-            'phone': request.user.phone,
-            'city': request.user.city,
-            'address': request.user.address,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'phone': user.phone,
+            'city': user.city,
+            'address': user.address,
         })
     return render(request, 'orders/checkout.html', {'cart': cart, 'form': form})
 
 
-@login_required
 def order_detail(request: HttpRequest, pk: int) -> HttpResponse:
     """Страница с деталями заказа"""
-    order = get_object_or_404(Order, pk=pk, user=request.user)
+    assert request.user.is_authenticated
+    user = request.user
+    order = get_object_or_404(Order, pk=pk, user=user)
     items = order.items.select_related('product')
 
     # User's reviews
     product_ids = items.values_list('product_id', flat=True)
-    reviews = Review.objects.filter(user=request.user, product_id__in=product_ids)
+    reviews = Review.objects.filter(user=user, product_id__in=product_ids)
     reviews_by_product = {r.product_id: r for r in reviews}
 
     return render(request, 'orders/order_detail.html', {
