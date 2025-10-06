@@ -16,7 +16,7 @@
 ##########################
 
 1. Склонируйте репозиторий в рабочую директорию:
-git clone 
+git clone https://github.com/ChelovechKo/project3-hopnbarley-store.git
 2. Из рабочей директории запустите проект командой
 docker compose up --build
 3. Перейдите по адресу http://127.0.0.1:8000/products/ на главную страницу
