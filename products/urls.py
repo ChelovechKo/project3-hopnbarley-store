@@ -6,8 +6,8 @@ app_name = 'products'
 
 
 urlpatterns = [
-    path('products/<slug:slug>/', ProductDetailView.as_view(), name='product-detail'),
-    path('products/', ProductListView.as_view(), name='product-list'),
+    path('', ProductListView.as_view(), name='product-list'),
+    path('<slug:slug>/', ProductDetailView.as_view(), name='product-detail'),
     path('guides-recipes/', GuidesRecipesView.as_view(), name='guides-recipes'),
     path('products/<slug:slug>/review/', leave_review, name='leave_review'),
     path('community/', Community.as_view(), name='community'),

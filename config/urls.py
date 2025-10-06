@@ -1,8 +1,8 @@
 from django.contrib import admin
+from django.views.generic import RedirectView
 from django.urls import path, include
 from django.conf.urls.static import static
 from config import settings
-
 from rest_framework.routers import DefaultRouter
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -16,11 +16,10 @@ router.register(r"products", ProductViewSet, basename="product")
 router.register(r"orders", OrderViewSet, basename="order")
 
 urlpatterns = [
+    path('', RedirectView.as_view(url='/products/', permanent=False)),
+    path('products/', include(('products.urls', 'products'), namespace='products')),
     path('admin/', admin.site.urls),
-
-    # веб-часть
     path('users/', include('users.urls', namespace='users')),
-    path('', include('products.urls', namespace='products')),
     path('orders/', include('orders.urls', namespace='orders')),
 
     # --- REST API ---
